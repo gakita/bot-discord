@@ -12,7 +12,9 @@ OFENSAS_PADRAO = [
 
 
 def _get_collection():
-    client = MongoClient(os.environ["MONGODB_URI"])
+    uri = os.environ["MONGODB_URI"]
+    client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+    client.admin.command("ping")
     return client["bot_criolo"]["ofensas"]
 
 
