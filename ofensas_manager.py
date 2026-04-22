@@ -1,5 +1,5 @@
-import json
 import os
+from pymongo import MongoClient
 
 OFENSAS_PADRAO = [
     "bunda merda",
@@ -11,21 +11,25 @@ OFENSAS_PADRAO = [
 ]
 
 
-def carregar_ofensas(caminho: str) -> list[str]:
-    if not os.path.exists(caminho):
+def _get_collection():
+    client = MongoClient(os.environ["MONGODB_URI"])
+    return client["bot_criolo"]["ofensas"]
+
+
+def carregar_ofensas() -> list[str]:
+    col = _get_collection()
+    doc = col.find_one({"_id": "lista"})
+    if doc is None:
+        col.insert_one({"_id": "lista", "ofensas": OFENSAS_PADRAO.copy()})
         return OFENSAS_PADRAO.copy()
-    with open(caminho, "r", encoding="utf-8") as f:
-        dados = json.load(f)
-    return dados.get("ofensas", OFENSAS_PADRAO.copy())
+    return doc["ofensas"]
 
 
-def salvar_ofensas(caminho: str, ofensas: list[str]) -> None:
-    with open(caminho, "w", encoding="utf-8") as f:
-        json.dump({"ofensas": ofensas}, f, ensure_ascii=False, indent=2)
-
-
-def adicionar_ofensa(caminho: str, nova: str) -> list[str]:
-    ofensas = carregar_ofensas(caminho)
-    ofensas.append(nova)
-    salvar_ofensas(caminho, ofensas)
-    return ofensas
+def adicionar_ofensa(nova: str) -> list[str]:
+    col = _get_collection()
+    col.update_one(
+        {"_id": "lista"},
+        {"$push": {"ofensas": nova}},
+        upsert=True,
+    )
+    return carregar_ofensas()
