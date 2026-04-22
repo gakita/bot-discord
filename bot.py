@@ -31,7 +31,9 @@ async def zoar_membros():
 
 @bot.event
 async def on_ready():
-    await bot.tree.sync()
+    guild = discord.Object(id=int(os.environ["GUILD_ID"]))
+    bot.tree.copy_global_to(guild=guild)
+    await bot.tree.sync(guild=guild)
     if not zoar_membros.is_running():
         zoar_membros.start()
     print(f"Bot conectado como {bot.user}")
