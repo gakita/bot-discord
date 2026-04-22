@@ -76,6 +76,19 @@ async def add_ofensa(interaction: discord.Interaction, ofensa: str):
     await interaction.response.send_message(f'Ofensa "{ofensa}" adicionada com sucesso! neeeeeeeeeeeeggaaaaaaaaaaaaa')
 
 
+@bot.tree.command(name="mandar-imagem", description="Manda uma imagem pra alguém aleatório")
+async def mandar_imagem(interaction: discord.Interaction):
+    resultado = carregar_imagem_aleatoria()
+    if not resultado:
+        await interaction.response.send_message("Nenhuma imagem no banco.", ephemeral=True)
+        return
+    membros = [m for m in interaction.guild.members if not m.bot]
+    membro = random.choice(membros)
+    dados, nome = resultado
+    arquivo = discord.File(io.BytesIO(dados), filename=nome)
+    await interaction.response.send_message(membro.mention, file=arquivo)
+
+
 @bot.tree.command(name="add-imagem", description="Adiciona uma imagem ao banco")
 @app_commands.describe(imagem="A imagem a ser adicionada")
 async def add_imagem(interaction: discord.Interaction, imagem: discord.Attachment):
