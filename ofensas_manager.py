@@ -16,7 +16,7 @@ _client = None
 def _get_collection():
     global _client
     if _client is None:
-        _client = MongoClient(os.environ["MONGO_URI"])
+        _client = MongoClient(os.environ["MONGODB_URI"])
     return _client["bot_criolo"]["ofensas"]
 
 
