@@ -48,6 +48,13 @@ async def zoar(interaction: discord.Interaction):
     await interaction.response.send_message(f"{membro.mention} {ofensa}")
 
 
+@bot.tree.command(name="listar-ofensas", description="Lista todas as ofensas do banco")
+async def listar_ofensas(interaction: discord.Interaction):
+    ofensas = carregar_ofensas()
+    lista = "\n".join(f"{i+1}. {o}" for i, o in enumerate(ofensas))
+    await interaction.response.send_message(f"**Ofensas cadastradas:**\n{lista}", ephemeral=True)
+
+
 @bot.tree.command(name="add-ofensa", description="Adiciona uma nova negrice ao server")
 @app_commands.describe(ofensa="A ofensa a ser adicionada")
 async def add_ofensa(interaction: discord.Interaction, ofensa: str):
