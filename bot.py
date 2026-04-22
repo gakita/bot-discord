@@ -41,8 +41,12 @@ async def on_ready():
 
 @bot.tree.command(name="zoar", description="Dispara a zoação agora mesmo")
 async def zoar(interaction: discord.Interaction):
+    ofensas = carregar_ofensas(OFENSAS_FILE)
+    membros = [m for m in interaction.guild.members if not m.bot]
     await interaction.response.defer(ephemeral=True)
-    await zoar_membros()
+    for membro in membros:
+        ofensa = random.choice(ofensas)
+        await interaction.channel.send(f"{membro.mention} {ofensa}")
     await interaction.delete_original_response()
 
 
