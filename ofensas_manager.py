@@ -10,12 +10,14 @@ OFENSAS_PADRAO = [
     "sem vergonha",
 ]
 
+_client = None
+
 
 def _get_collection():
-    uri = os.environ["MONGODB_URI"]
-    client = MongoClient(uri, serverSelectionTimeoutMS=5000)
-    client.admin.command("ping")
-    return client["bot_criolo"]["ofensas"]
+    global _client
+    if _client is None:
+        _client = MongoClient(os.environ["MONGO_URI"])
+    return _client["bot_criolo"]["ofensas"]
 
 
 def carregar_ofensas() -> list[str]:
