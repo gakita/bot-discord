@@ -115,7 +115,7 @@ async def help_cmd(interaction: discord.Interaction):
 `/add-imagem` — adicionar uma imagem ao banco
 `/listar-imagens` — ver todas as imagens cadastradas
 
-🐽 *O bot zoar automaticamente alguém a cada 4 horas no canal* 🐽"""
+🐽 *O bot vai zoar automaticamente alguém a cada 4 horas no canal* 🐽"""
     await interaction.response.send_message(mensagem, ephemeral=True)
 
 
