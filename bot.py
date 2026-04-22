@@ -95,6 +95,30 @@ async def ranking_zoados(interaction: discord.Interaction):
     await interaction.response.send_message(mensagem)
 
 
+@bot.tree.command(name="help", description="Lista todos os comandos disponíveis")
+async def help_cmd(interaction: discord.Interaction):
+    mensagem = """🐷 **COMANDOS DO BOT** 🐷
+
+**Zoação**
+`/zoar` — zoar um membro aleatório
+`/zoar-alvo @usuario` — zoar alguém específico
+`/mandar-imagem` — mandar uma imagem pra alguém aleatório
+
+**Ranking**
+`/ranking-zoados` — ver o ranking dos mais zoados
+
+**Ofensas**
+`/add-ofensa` — adicionar uma nova ofensa ao banco
+`/listar-ofensas` — ver todas as ofensas cadastradas
+
+**Imagens**
+`/add-imagem` — adicionar uma imagem ao banco
+`/listar-imagens` — ver todas as imagens cadastradas
+
+🐽 *O bot zoar automaticamente alguém a cada 4 horas no canal* 🐽"""
+    await interaction.response.send_message(mensagem, ephemeral=True)
+
+
 @bot.tree.command(name="listar-ofensas", description="Lista todas as ofensas do banco")
 async def listar_ofensas(interaction: discord.Interaction):
     ofensas = carregar_ofensas()
