@@ -26,7 +26,7 @@ async def zoar_membros():
         membros = [m for m in guild.members if not m.bot]
         for membro in membros:
             ofensa = random.choice(ofensas)
-            await canal.send(f"{membro.mention} você é um {ofensa}")
+            await canal.send(f"{membro.mention} {ofensa}")
 
 
 @bot.event
