@@ -37,6 +37,12 @@ async def on_ready():
     print(f"Bot conectado como {bot.user}")
 
 
+@bot.tree.command(name="zoar", description="Dispara a zoação agora mesmo")
+async def zoar(interaction: discord.Interaction):
+    await interaction.response.send_message("Zoando...", ephemeral=True)
+    await zoar_membros()
+
+
 @bot.tree.command(name="add-ofensa", description="Adiciona uma nova ofensa à lista")
 @app_commands.describe(ofensa="A ofensa a ser adicionada")
 async def add_ofensa(interaction: discord.Interaction, ofensa: str):
