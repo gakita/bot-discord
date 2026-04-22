@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from config import CANAL_NOME, INTERVALO_HORAS
 from ofensas_manager import carregar_ofensas, adicionar_ofensa
 from imagens_manager import carregar_imagem_aleatoria, salvar_imagem, listar_imagens
+from ranking_manager import registrar_zoacao, carregar_ranking
 
 load_dotenv()
 
@@ -18,11 +19,14 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+PORCOS = ["🐷", "🐽", "🐖"]
 
-async def montar_mensagem(mention: str) -> tuple[str, discord.File | None]:
+
+async def zoar_membro(membro: discord.Member) -> tuple[str, discord.File | None]:
     ofensas = carregar_ofensas()
     ofensa = random.choice(ofensas)
-    texto = f"{mention} {ofensa}"
+    texto = f"{membro.mention} {ofensa}"
+    registrar_zoacao(membro.id, membro.display_name)
 
     resultado = carregar_imagem_aleatoria()
     if resultado:
@@ -41,7 +45,7 @@ async def zoar_membros():
             continue
         membros = [m for m in guild.members if not m.bot]
         membro = random.choice(membros)
-        texto, arquivo = await montar_mensagem(membro.mention)
+        texto, arquivo = await zoar_membro(membro)
         await canal.send(texto, file=arquivo)
 
 
@@ -59,8 +63,36 @@ async def on_ready():
 async def zoar(interaction: discord.Interaction):
     membros = [m for m in interaction.guild.members if not m.bot]
     membro = random.choice(membros)
-    texto, arquivo = await montar_mensagem(membro.mention)
+    texto, arquivo = await zoar_membro(membro)
     await interaction.response.send_message(texto, file=arquivo)
+
+
+@bot.tree.command(name="zoar-alvo", description="Zoar alguém específico")
+@app_commands.describe(alvo="O coitado que vai apanhar")
+async def zoar_alvo(interaction: discord.Interaction, alvo: discord.Member):
+    texto, arquivo = await zoar_membro(alvo)
+    await interaction.response.send_message(texto, file=arquivo)
+
+
+@bot.tree.command(name="ranking-zoados", description="Ranking dos mais zoados do servidor")
+async def ranking_zoados(interaction: discord.Interaction):
+    ranking = carregar_ranking()
+    if not ranking:
+        await interaction.response.send_message("Ninguém foi zoado ainda 🐷", ephemeral=True)
+        return
+
+    total = sum(r["count"] for r in ranking)
+    medalhas = ["🥇", "🥈", "🥉"]
+    linhas = []
+
+    for i, entry in enumerate(ranking):
+        medalha = medalhas[i] if i < 3 else f"{i+1}."
+        porco = random.choice(PORCOS)
+        linhas.append(f"{medalha} {entry['username']} — {entry['count']} zoações {porco}")
+
+    lista = "\n".join(linhas)
+    mensagem = f"🐷🐷🐷 **RANKING DOS ZOADOS** 🐷🐷🐷\n\n{lista}\n\n🐷 *Total de zoações no servidor: {total}* 🐷"
+    await interaction.response.send_message(mensagem)
 
 
 @bot.tree.command(name="listar-ofensas", description="Lista todas as ofensas do banco")
