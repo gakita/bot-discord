@@ -14,6 +14,7 @@ load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
+intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -106,6 +107,24 @@ async def listar_imagens_cmd(interaction: discord.Interaction):
         return
     lista = "\n".join(f"{i+1}. {nome}" for i, nome in enumerate(imagens))
     await interaction.response.send_message(f"**Imagens cadastradas:**\n{lista}", ephemeral=True)
+
+
+@bot.command(name="add-imagens")
+async def add_imagens(ctx: commands.Context):
+    if not ctx.message.attachments:
+        await ctx.reply("Anexe pelo menos uma imagem junto com o comando.", mention_author=False)
+        return
+    salvos = []
+    for anexo in ctx.message.attachments:
+        if anexo.content_type and anexo.content_type.startswith("image/"):
+            dados = await anexo.read()
+            salvar_imagem(anexo.filename, dados)
+            salvos.append(anexo.filename)
+    if salvos:
+        lista = "\n".join(f"✓ {n}" for n in salvos)
+        await ctx.reply(f"{len(salvos)} imagem(ns) adicionada(s):\n{lista}", mention_author=False)
+    else:
+        await ctx.reply("Nenhuma imagem válida encontrada nos anexos.", mention_author=False)
 
 
 if __name__ == "__main__":
