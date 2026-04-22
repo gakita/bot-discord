@@ -41,8 +41,9 @@ async def on_ready():
 
 @bot.tree.command(name="zoar", description="Dispara a zoação agora mesmo")
 async def zoar(interaction: discord.Interaction):
-    await interaction.response.send_message("Zoando...", ephemeral=True)
+    await interaction.response.defer(ephemeral=True)
     await zoar_membros()
+    await interaction.delete_original_response()
 
 
 @bot.tree.command(name="add-ofensa", description="Adiciona uma nova ofensa à lista")
