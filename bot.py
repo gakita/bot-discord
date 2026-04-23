@@ -91,7 +91,7 @@ async def ranking_zoados(interaction: discord.Interaction):
         linhas.append(f"{medalha} {entry['username']} — {entry['count']} zoações {porco}")
 
     lista = "\n".join(linhas)
-    mensagem = f"🐷🐷🐷 **RANKING DOS ZOADOS** 🐷🐷🐷\n\n{lista}\n\n🐷 *Total de zoações no servidor: {total}* 🐷"
+    mensagem = f"🐷🐷🐷 **RANKING DOS PORCOS** 🐷🐷🐷\n\n{lista}\n\n🐷 *Total de porcos no servidor: {total}* 🐷"
     await interaction.response.send_message(mensagem)
 
 
